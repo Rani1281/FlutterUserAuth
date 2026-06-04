@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "688239089075",
+    "project_id": "articly-save",
+    "storage_bucket": "articly-save.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688239089075:android:ef4c353055f204e7c667c6",
+        "android_client_info": {
+          "package_name": "com.example.articly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "688239089075-rimucekrcj6j4ojujg0mf558flcovvda.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9Ebj3eTTTrqtUIBT_6vJvuooiIKecnaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "688239089075-rimucekrcj6j4ojujg0mf558flcovvda.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
