@@ -1,16 +1,11 @@
-# articly
+# Articly
 
-A new Flutter project.
+This is a Flutter project built for Android, IOS, and Web
 
-## Getting Started
+## What is this app?
+- This app lets you save intresting articles for reading them later.
+- Unlike a Google Keep or similar apps, it allows you to set customisable reading reminders notifications, and keeps you on track on your progress and pushes you to achieve further 💪.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Who is this app for?
+- Anyone who likes to read for fun or for work.
+- Busy people that don't have reading continuously.
