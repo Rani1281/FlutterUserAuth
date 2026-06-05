@@ -1,0 +1,22 @@
+---
+description: Application architecture layers, feature organization, and API design
+globs: lib/**/*
+alwaysApply: false
+---
+
+# Application Architecture
+
+* **Separation of Concerns:** Aim for separation of concerns similar to MVC/MVVM, with defined Model, View, and ViewModel/Controller roles.
+* **Logical Layers:** Organize the project into logical layers:
+    * Presentation (widgets, screens)
+    * Domain (business logic classes)
+    * Data (model classes, API clients)
+    * Core (shared classes, utilities, and extension types)
+* **Feature-based Organization:** For larger projects, organize code by feature, where each feature has its own presentation, domain, and data subfolders. This improves navigability and scalability.
+
+## API Design Principles
+
+When building reusable APIs, such as a library, follow these principles.
+
+* **Consider the User:** Design APIs from the perspective of the person who will be using them. The API should be intuitive and easy to use correctly.
+* **Documentation is Essential:** Good documentation is a part of good API design. It should be clear, concise, and provide examples.

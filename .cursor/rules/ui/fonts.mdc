@@ -1,0 +1,39 @@
+---
+description: Font selection, typographic hierarchy, readability, and scale
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Font Best Practices
+
+## Font Selection
+
+* **Limit Font Families:** Stick to one or two font families for the entire application.
+* **Prioritize Legibility:** Choose fonts that are easy to read on screens of all sizes. Sans-serif fonts are generally preferred for UI body text.
+* **System Fonts:** Consider using platform-native system fonts.
+* **Google Fonts:** For a wide selection of open-source fonts, use the `google_fonts` package.
+
+## Hierarchy and Scale
+
+* **Establish a Scale:** Define a set of font sizes for different text elements (e.g., headlines, titles, body text, captions).
+* **Use Font Weight:** Differentiate text effectively using font weights.
+* **Color and Opacity:** Use color and opacity to de-emphasize less important text.
+
+## Readability
+
+* **Line Height (Leading):** Set an appropriate line height, typically **1.4x to 1.6x** the font size.
+* **Line Length:** For body text, aim for a line length of **45-75 characters**.
+* **Avoid All Caps:** Do not use all caps for long-form text.
+
+## Example Typographic Scale
+
+```dart
+// In your ThemeData
+textTheme: const TextTheme(
+  displayLarge: TextStyle(fontSize: 57.0, fontWeight: FontWeight.bold),
+  titleLarge: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+  bodyLarge: TextStyle(fontSize: 16.0, height: 1.5),
+  bodyMedium: TextStyle(fontSize: 14.0, height: 1.4),
+  labelSmall: TextStyle(fontSize: 11.0, color: Colors.grey),
+),
+```

@@ -1,0 +1,10 @@
+---
+description: Data structures, repositories, and data abstraction patterns
+globs: lib/**/*
+alwaysApply: false
+---
+
+# Data Flow
+
+* **Data Structures:** Define data structures (classes) to represent the data used in the application.
+* **Data Abstraction:** Abstract data sources (e.g., API calls, database operations) using Repositories/Services to promote testability.

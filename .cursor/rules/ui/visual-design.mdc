@@ -1,0 +1,16 @@
+---
+description: UI design principles — responsiveness, typography, shadows, and interactive elements
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Visual Design
+
+* **UI Design:** Build beautiful and intuitive user interfaces that follow modern design guidelines.
+* **Responsiveness:** Ensure the app is mobile responsive and adapts to different screen sizes, working perfectly on mobile and web.
+* **Navigation:** If there are multiple pages for the user to interact with, provide an intuitive and easy navigation bar or controls.
+* **Typography:** Stress and emphasize font sizes to ease understanding, e.g., hero text, section headlines, list headlines, keywords in paragraphs.
+* **Background:** Apply subtle noise texture to the main background to add a premium, tactile feel.
+* **Shadows:** Multi-layered drop shadows create a strong sense of depth; cards have a soft, deep shadow to look "lifted."
+* **Icons:** Incorporate icons to enhance the user's understanding and the logical navigation of the app.
+* **Interactive Elements:** Buttons, checkboxes, sliders, lists, charts, graphs, and other interactive elements have a shadow with elegant use of color to create a "glow" effect.

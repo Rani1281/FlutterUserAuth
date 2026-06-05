@@ -1,0 +1,19 @@
+---
+description: analysis_options.yaml configuration with flutter_lints
+globs: analysis_options.yaml
+alwaysApply: false
+---
+
+# Lint Rules
+
+Include the package in the `analysis_options.yaml` file. Use the following `analysis_options.yaml` file as a starting point:
+
+```yaml
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Add additional lint rules here:
+    # avoid_print: false
+    # prefer_single_quotes: true
+```

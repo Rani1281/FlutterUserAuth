@@ -1,0 +1,11 @@
+---
+description: Responsive UI styling with LayoutBuilder, text themes, and text fields
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# UI Theming and Styling Code
+
+* **Responsiveness:** Use `LayoutBuilder` or `MediaQuery` to create responsive UIs.
+* **Text:** Use `Theme.of(context).textTheme` for text styles.
+* **Text Fields:** Configure `textCapitalization`, `keyboardType`, and `placeholder`.
