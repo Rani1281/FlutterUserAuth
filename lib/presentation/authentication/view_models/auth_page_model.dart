@@ -21,11 +21,13 @@ class AuthPageModel extends ChangeNotifier {
   bool get isRunning => _isRunning;
   bool get isRunningGoogle => _isRunningGoogle;
 
+  /// switches the value of _isLogin to !_isLogin and notifies listeners
   void toggleForm() {
     _isLogin = !isLogin;
     notifyListeners();
   }
 
+  /// switches the value of _isPasswordVisible to !_isPasswordVisible and notifies listeners
   void togglePasswordVisibility() {
     _isPasswordVisible = !_isPasswordVisible;
     notifyListeners();
@@ -36,19 +38,17 @@ class AuthPageModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Sets the value of _isRunning to true and clears the error message, and notifies listeners
+  ///
+  /// Calls a function that validates the username, email, password and confirmPassword fields - if invalid, sets the error message, assigns _isRunning to false, notifies listeners and returns
+  ///
+  /// Otherwise, calls a function that authenticates with Firebase
   Future<void> submit({
     required String username,
     required String email,
     required String password,
     required String confirmPassword,
   }) async {
-    // set isRunning to true and notify
-    // 1. Validate the fields according to isLogin. Return and error if not valid.
-
-    // 2. Call Firebase Auth appropriate method according to isLogin. Check Firebase exceptions, or other ones, and set an error.
-
-    // Maybe need to call notifyListeners, but not sure. (start with not)
-
     _isRunning = true;
     _error = null; // clear the error
     notifyListeners();
@@ -68,9 +68,18 @@ class AuthPageModel extends ChangeNotifier {
     }
 
     // Authenticate with Firebase
-    await authenticate(username: username, email: email, password: password);
+    _error = await authenticate(
+      username: username,
+      email: email,
+      password: password,
+    );
+    _isRunning = false;
+    notifyListeners();
   }
 
+  /// Validates the username, email, password and confirm password fields, by calling each one his separate validation function, according to isLogin - if true, validates only the email and the password, and otherwise it validates all fields. If an error message returns, the function returns the error message before checking the next fields.
+  ///
+  /// If no error message was returned, the function returns null.
   String? validateFields({
     required String username,
     required String email,
@@ -99,7 +108,10 @@ class AuthPageModel extends ChangeNotifier {
     return null;
   }
 
-  Future<void> authenticate({
+  /// If isLogin, attempts to login to Firebase by awaiting to the service method service.login(email, password). Otherwise, attempts to register by awaiting to service.register(email, password), and later awaiting to service.updateUsername(username).
+  ///
+  /// On success, return null. And on error, catches it and returns the error message.
+  Future<String?> authenticate({
     required String username,
     required String email,
     required String password,
@@ -111,14 +123,11 @@ class AuthPageModel extends ChangeNotifier {
         await service.register(email, password);
         await service.updateUsername(username);
       }
+      return null;
     } on CustomAuthException catch (e) {
-      _error = e.displayMessage;
+      return e.displayMessage;
     } catch (e) {
-      _error =
-          'Something went wrong, please check your details or try again later';
-    } finally {
-      _isRunning = false;
-      notifyListeners();
+      return 'Something went wrong, please check your details or try again later';
     }
   }
 
@@ -183,7 +192,7 @@ class AuthPageModel extends ChangeNotifier {
     // else if (!password.hasSymbol) {
     //   return 'Password must have at least one symbol';
     // }
-    // TODO: after acaling a bit consider adding this
+    // TODO: after scaling a bit consider adding this
     return null;
   }
 

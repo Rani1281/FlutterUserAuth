@@ -179,13 +179,13 @@ class _AuthPageState extends State<AuthPage> {
                     password: _passwordController.text.trim(),
                     confirmPassword: _confirmPasswordController.text.trim(),
                   ),
-                  child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: widget.viewModel.isRunning
-                        ? CircularProgressIndicator(strokeWidth: 2)
-                        : Text(isLogin ? 'Login' : 'Create account'),
-                  ),
+                  child: widget.viewModel.isRunning
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(isLogin ? 'Login' : 'Create account'),
                 ),
 
                 Padding(
@@ -200,34 +200,33 @@ class _AuthPageState extends State<AuthPage> {
 
                 // <--- Google sign in button --->
                 AuthButton(
+                  key: ValueKey('GoogleSignInButton'),
                   onPressed: widget.viewModel.continueWithGoogle,
                   color: Colors.white,
-                  child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: widget.viewModel.isRunningGoogle
-                        ? const CircularProgressIndicator(strokeWidth: 2)
-                        : Row(
-                            spacing: 15,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Google Icon
-                              SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: Image.asset('assets/google_icon.png'),
+                  child: widget.viewModel.isRunningGoogle
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Row(
+                          spacing: 15,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: Image.asset('assets/google_icon.png'),
+                            ),
+                            const Text(
+                              'Continue with Google',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
                               ),
-                              // Text
-                              const Text(
-                                'Continue with Google',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
+                            ),
+                          ],
+                        ),
                 ),
               ],
             ),
