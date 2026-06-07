@@ -2,6 +2,7 @@ import 'package:articly/config/auth_exceptions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
   AuthService({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
@@ -45,25 +46,44 @@ class AuthService {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
-      await _googleSignIn.initialize();
-      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      if (kIsWeb) {
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        return await _auth.signInWithPopup(googleProvider);
+      } else {
+        await _googleSignIn.initialize();
 
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-      return await _auth.signInWithCredential(credential);
+        final GoogleSignInAccount googleUser = await _googleSignIn
+            .authenticate();
+
+        final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+        final credential = GoogleAuthProvider.credential(
+          idToken: googleAuth.idToken,
+        );
+
+        return await _auth.signInWithCredential(credential);
+      }
+    } on FirebaseAuthException catch (e) {
+      final errorMessage = authMessages[e.code] ?? 'Something went wrong';
+      throw CustomAuthException(errorMessage, code: e.code);
     } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        throw CustomAuthException(
+          'Sign in cancelled by user',
+          code: 'SIGN_IN_CANCELLED',
+        );
+      }
       throw CustomAuthException(
         'Something went wrong',
         code: e.code.name,
         errorMessage: e.description,
       );
-    } on FirebaseAuthException catch (e) {
-      final errorMessage = authMessages[e.code] ?? 'Something went wrong';
-      throw CustomAuthException(errorMessage, code: e.code);
     } catch (e) {
-      rethrow;
+      throw CustomAuthException(
+        'Something went wrong',
+        code: 'UNKNOWN_ERROR',
+        errorMessage: e.toString(),
+      );
     }
   }
 
