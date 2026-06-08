@@ -16,12 +16,13 @@ class AuthService {
 
   Stream<User?> get authChanges => _auth.idTokenChanges();
 
-  Future<UserCredential?> register(String email, String password) async {
+  Future<User?> register(String email, String password) async {
     try {
-      return await _auth.createUserWithEmailAndPassword(
+      final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      return credential.user;
     } on FirebaseAuthException catch (e) {
       final errorMessage = authMessages[e.code] ?? 'An error occurred';
       throw CustomAuthException(errorMessage, code: e.code);
@@ -30,12 +31,13 @@ class AuthService {
     }
   }
 
-  Future<UserCredential?> login(String email, String password) async {
+  Future<User?> login(String email, String password) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      final credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      return credential.user;
     } on FirebaseAuthException catch (e) {
       final errorMessage = authMessages[e.code] ?? 'An error occurred';
       throw CustomAuthException(errorMessage, code: e.code);
@@ -44,11 +46,12 @@ class AuthService {
     }
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     try {
       if (kIsWeb) {
         final GoogleAuthProvider googleProvider = GoogleAuthProvider();
-        return await _auth.signInWithPopup(googleProvider);
+        final credential = await _auth.signInWithPopup(googleProvider);
+        return credential.user;
       } else {
         await _googleSignIn.initialize();
 
@@ -61,7 +64,8 @@ class AuthService {
           idToken: googleAuth.idToken,
         );
 
-        return await _auth.signInWithCredential(credential);
+        final userCredential = await _auth.signInWithCredential(credential);
+        return userCredential.user;
       }
     } on FirebaseAuthException catch (e) {
       final errorMessage = authMessages[e.code] ?? 'Something went wrong';

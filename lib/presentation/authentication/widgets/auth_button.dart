@@ -5,6 +5,7 @@ class AuthButton extends StatelessWidget {
   final Color textColor;
   final VoidCallback? onPressed;
   final double maxWidth;
+  final double height;
   final Widget child;
 
   const AuthButton({
@@ -13,6 +14,7 @@ class AuthButton extends StatelessWidget {
     required this.onPressed,
     this.textColor = Colors.white, // Defaults to white text
     this.maxWidth = 450.0, // Matches the text field's max width
+    this.height = 48,
     required this.child,
   });
 
@@ -24,6 +26,7 @@ class AuthButton extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: SizedBox(
           width: double.infinity,
+          height: height,
           child: ElevatedButton(
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(

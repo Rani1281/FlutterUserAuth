@@ -1,3 +1,6 @@
+import 'package:articly/data/services/auth_service.dart';
+import 'package:articly/presentation/authentication/view_models/auth_page_model.dart';
+import 'package:articly/presentation/authentication/widgets/auth_page.dart';
 import 'package:articly/theme/app_bar_theme.dart';
 import 'package:articly/theme/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,6 +24,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
         appBarTheme: appBarTheme,
       ),
+      home: AuthPage(viewModel: AuthPageModel(service: AuthService())),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:articly/data/services/auth_service.dart';
 import 'package:articly/domain/string_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 class AuthPageModel extends ChangeNotifier {
   AuthPageModel({required this.service});
@@ -14,6 +15,8 @@ class AuthPageModel extends ChangeNotifier {
   bool _isRunning = false;
   bool _isRunningGoogle = false;
 
+  final log = Logger('AuthPageModel');
+
   bool get isLogin => _isLogin;
   bool get isPasswordVisible => _isPasswordVisible;
   bool get isConfirmPasswordVisible => _isConfirmPasswordVisible;
@@ -21,13 +24,16 @@ class AuthPageModel extends ChangeNotifier {
   bool get isRunning => _isRunning;
   bool get isRunningGoogle => _isRunningGoogle;
 
-  /// switches the value of _isLogin to !_isLogin and notifies listeners
   void toggleForm() {
     _isLogin = !isLogin;
+    _error = null;
+    _isPasswordVisible = false;
+    _isConfirmPasswordVisible = false;
+    _isRunning = false;
+    _isRunningGoogle = false;
     notifyListeners();
   }
 
-  /// switches the value of _isPasswordVisible to !_isPasswordVisible and notifies listeners
   void togglePasswordVisibility() {
     _isPasswordVisible = !_isPasswordVisible;
     notifyListeners();
@@ -38,17 +44,14 @@ class AuthPageModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Sets the value of _isRunning to true and clears the error message, and notifies listeners
-  ///
-  /// Calls a function that validates the username, email, password and confirmPassword fields - if invalid, sets the error message, assigns _isRunning to false, notifies listeners and returns
-  ///
-  /// Otherwise, calls a function that authenticates with Firebase
   Future<void> submit({
     required String username,
     required String email,
     required String password,
     required String confirmPassword,
   }) async {
+    log.info('Action button pressed. Validating fields...');
+
     _isRunning = true;
     _error = null; // clear the error
     notifyListeners();
@@ -63,11 +66,11 @@ class AuthPageModel extends ChangeNotifier {
     if (message != null) {
       _error = message;
       _isRunning = false;
+      log.warning('Details are not valid. Problem: $message');
       notifyListeners();
       return Future.value();
     }
 
-    // Authenticate with Firebase
     _error = await authenticate(
       username: username,
       email: email,
@@ -77,9 +80,6 @@ class AuthPageModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Validates the username, email, password and confirm password fields, by calling each one his separate validation function, according to isLogin - if true, validates only the email and the password, and otherwise it validates all fields. If an error message returns, the function returns the error message before checking the next fields.
-  ///
-  /// If no error message was returned, the function returns null.
   String? validateFields({
     required String username,
     required String email,
@@ -108,39 +108,55 @@ class AuthPageModel extends ChangeNotifier {
     return null;
   }
 
-  /// If isLogin, attempts to login to Firebase by awaiting to the service method service.login(email, password). Otherwise, attempts to register by awaiting to service.register(email, password), and later awaiting to service.updateUsername(username).
-  ///
-  /// On success, return null. And on error, catches it and returns the error message.
   Future<String?> authenticate({
     required String username,
     required String email,
     required String password,
   }) async {
+    log.info('Authentication with Firebase started...');
     try {
       if (isLogin) {
-        await service.login(email, password);
+        final user = await service.login(email, password);
+        if (user != null) {
+          log.fine('User was successfully logged in!');
+        }
       } else {
-        await service.register(email, password);
+        final user = await service.register(email, password);
         await service.updateUsername(username);
+        if (user != null) {
+          log.fine('User was successfully created, and username was updated!');
+        }
       }
       return null;
     } on CustomAuthException catch (e) {
+      log.shout(
+        'A Firebase Auth exception occurred: ${e.errorMessage}.\nCode: ${e.code}',
+      );
       return e.displayMessage;
     } catch (e) {
+      log.shout('An error has occurred: ${e.toString()}');
       return 'Something went wrong, please check your details or try again later';
     }
   }
 
   Future<void> continueWithGoogle() async {
+    log.info('Google Authentication started...');
     _isRunningGoogle = true;
     _error = null;
     notifyListeners();
 
     try {
-      await service.signInWithGoogle();
+      final user = await service.signInWithGoogle();
+      if (user != null) {
+        log.fine('Google authentication was successful!');
+      }
     } on CustomAuthException catch (e) {
+      log.shout(
+        'A Firebase Auth exception occurred: ${e.errorMessage}.\nCode: ${e.code}',
+      );
       _error = e.displayMessage;
     } catch (e) {
+      log.shout('An error occurred: ${e.toString()}');
       _error =
           'Something went wrong, please check your details or try again later';
     } finally {
@@ -151,7 +167,7 @@ class AuthPageModel extends ChangeNotifier {
 
   // ! <--- Validation Methods --->
 
-  static String? validateUsername(String username) {
+  String? validateUsername(String username) {
     if (username.isEmpty) {
       return 'Username is required';
     }
@@ -161,49 +177,45 @@ class AuthPageModel extends ChangeNotifier {
     return null;
   }
 
-  static String? validateEmail(String email) {
+  String? validateEmail(String email) {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (email.isEmpty) {
       return 'Email is required';
     }
-    if (!emailRegex.hasMatch(email)) {
+    if (!_isLogin && !emailRegex.hasMatch(email)) {
       return 'The email is invalid';
     }
     return null;
   }
 
-  static String? validatePassword(String password) {
-    // final lt = password.hasLetter;
-    // final nb = password.hasNumber;
-    // final sb = password.hasSymbol;
-
+  String? validatePassword(String password) {
     if (password.isEmpty) {
       return 'Password is required';
     }
-    if (password.length < 6) {
-      return 'Password must contain at least 6 characters';
+    if (!_isLogin) {
+      if (password.length < 6) {
+        return 'Password must contain at least 6 characters';
+      }
+      if (!password.hasLetter) {
+        return 'Password must contain at least one letter';
+      }
+      if (!password.hasNumber) {
+        return 'Password must have at least one number';
+      }
+      // else if (!password.hasSymbol) {
+      //   return 'Password must have at least one symbol';
+      // }
+      // TODO: after scaling a bit consider adding this
     }
-    if (!password.hasLetter) {
-      return 'Password must contain at least one letter';
-    }
-    if (!password.hasNumber) {
-      return 'Password must have at least one number';
-    }
-    // else if (!password.hasSymbol) {
-    //   return 'Password must have at least one symbol';
-    // }
-    // TODO: after scaling a bit consider adding this
     return null;
   }
 
-  static String? validateConfirmPassword(
-    String confirmPassword,
-    String password,
-  ) {
+  // Only called in !isLogin
+  String? validateConfirmPassword(String confirmPassword, String password) {
     if (confirmPassword.isEmpty) {
       return 'Password confirmation is required';
     }
-    if (validatePassword(password) != null || confirmPassword != password) {
+    if (confirmPassword != password) {
       return 'The password does not match the original one';
     }
     return null;

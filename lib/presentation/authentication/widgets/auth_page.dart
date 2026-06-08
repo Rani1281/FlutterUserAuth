@@ -22,11 +22,10 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLogin = widget.viewModel.isLogin;
-
     return ListenableBuilder(
       listenable: widget.viewModel,
       builder: (context, _) {
+        final bool isLogin = widget.viewModel.isLogin;
         return Scaffold(
           backgroundColor: AppColors.scaffoldBackgroundColor,
           appBar: AppBar(
@@ -38,41 +37,50 @@ class _AuthPageState extends State<AuthPage> {
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 // Main title changes based on state
-                Text(
-                  isLogin ? 'Welcome back' : 'Create your account',
-                  // style: const TextStyle(
-                  //   fontSize: 28,
-                  //   fontWeight: FontWeight.bold,
-                  //   color: Colors.black87,
-                  // ),
-                  style: Theme.of(context).textTheme.headlineLarge,
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 460),
+                  child: Row(
+                    children: [
+                      Text(
+                        isLogin ? 'Welcome back' : 'Create your account',
+                        // style: const TextStyle(
+                        //   fontSize: 28,
+                        //   fontWeight: FontWeight.bold,
+                        //   color: Colors.black87,
+                        // ),
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                    ],
+                  ),
                 ),
 
                 // --- Toggle Link Row ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      isLogin
-                          ? 'Don\'t have an account?'
-                          : 'Already have an account?', // Text changes
-                    ),
-                    TextButton(
-                      onPressed: widget
-                          .viewModel
-                          .toggleForm, // Call the toggle function
-                      child: Text(
-                        isLogin ? 'Register' : 'Login', // Text changes
-                        style: const TextStyle(
-                          color: Colors.blue,
-                        ), // body medium + colors
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 450),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        isLogin
+                            ? 'Don\'t have an account?'
+                            : 'Already have an account?', // Text changes
                       ),
-                    ),
-                  ],
+                      TextButton(
+                        onPressed: () => widget.viewModel
+                            .toggleForm(), // Call the toggle function
+                        child: Text(
+                          isLogin ? 'Register' : 'Login', // Text changes
+                          style: const TextStyle(
+                            color: Colors.blue,
+                          ), // body medium + colors
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 15),
@@ -100,7 +108,7 @@ class _AuthPageState extends State<AuthPage> {
                   key: Key('passwordField'),
                   controller: _passwordController,
                   hintText: 'Password',
-                  obscureText: widget.viewModel.isPasswordVisible,
+                  obscureText: !widget.viewModel.isPasswordVisible,
                   suffixIcon: IconButton(
                     icon: Icon(
                       widget.viewModel.isPasswordVisible
@@ -120,7 +128,7 @@ class _AuthPageState extends State<AuthPage> {
                     key: Key('confirmPasswordField'),
                     controller: _confirmPasswordController,
                     hintText: 'Confirm password',
-                    obscureText: widget.viewModel.isConfirmPasswordVisible,
+                    obscureText: !widget.viewModel.isConfirmPasswordVisible,
                     suffixIcon: IconButton(
                       icon: Icon(
                         widget.viewModel.isConfirmPasswordVisible
@@ -135,27 +143,35 @@ class _AuthPageState extends State<AuthPage> {
                 ],
 
                 // Forgot Password link (only for Login)
-                if (isLogin)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ForgotPasswordPage(
-                              email: _emailController.text.trim(),
+                if (isLogin) ...[
+                  const SizedBox(height: 5),
+
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 450),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ForgotPasswordPage(
+                                email: _emailController.text.trim(),
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Forgot password?',
-                        style: TextStyle(color: Colors.blue),
+                          );
+                        },
+                        child: const Text(
+                          'Forgot password?',
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ),
                   ),
-                SizedBox(height: isLogin ? 5 : 24),
+                  const SizedBox(height: 5),
+                ],
+
+                SizedBox(height: isLogin ? 0 : 15),
 
                 // <--- Error Message Text --->
                 if (widget.viewModel.error != null) ...[
@@ -166,13 +182,13 @@ class _AuthPageState extends State<AuthPage> {
                     overflow: TextOverflow.clip,
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 18),
                 ],
 
                 // <--- Action button --->
                 AuthButton(
                   key: Key('actionButton'),
-                  color: Colors.amber,
+                  color: const Color.fromARGB(255, 250, 209, 88),
                   onPressed: () => widget.viewModel.submit(
                     username: _usernameController.text.trim(),
                     email: _emailController.text.trim(),
@@ -185,7 +201,10 @@ class _AuthPageState extends State<AuthPage> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text(isLogin ? 'Login' : 'Create account'),
+                      : Text(
+                          isLogin ? 'Login' : 'Create account',
+                          style: TextStyle(fontSize: 16, color: Colors.black87),
+                        ),
                 ),
 
                 Padding(
@@ -222,7 +241,7 @@ class _AuthPageState extends State<AuthPage> {
                               'Continue with Google',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black54,
+                                color: Colors.black87,
                               ),
                             ),
                           ],

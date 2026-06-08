@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:articly/data/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 class VerifyEmailViewModel extends ChangeNotifier {
   VerifyEmailViewModel({required AuthService authService})
@@ -18,16 +19,24 @@ class VerifyEmailViewModel extends ChangeNotifier {
   bool get isRunning => _isRunning;
   bool get isEmailVerified => _isEmailVerified;
 
+  final log = Logger('VerifyEmailViewModel');
+
   Future<void> sendEmailVerification() async {
+    log.info('Email verification sending started...');
     _errorMessage = null;
     _isRunning = true;
     notifyListeners();
 
     try {
       await _authService.sendEmailVerification();
+      log.fine('Email verification was sent successfully!');
     } on CustomAuthException catch (e) {
+      log.shout(
+        'A Firebase Auth exception occurred: ${e.errorMessage}.\nCode: ${e.code}',
+      );
       _errorMessage = e.displayMessage;
     } catch (e) {
+      log.shout('An error has occurred: ${e.toString()}');
       _errorMessage = 'Something went wrong. Please try again later';
     } finally {
       _isRunning = false;
@@ -39,7 +48,7 @@ class VerifyEmailViewModel extends ChangeNotifier {
     final user = _authService.user;
 
     if (user == null) {
-      debugPrint('The user doesn\'t exist, so email is not verified');
+      log.warning('The user doesn\'t exist, so email is not verified');
       return false;
     }
 
@@ -48,6 +57,7 @@ class VerifyEmailViewModel extends ChangeNotifier {
     notifyListeners();
 
     if (_isEmailVerified) {
+      log.fine('Email is verified!');
       return true;
     }
     return false;
