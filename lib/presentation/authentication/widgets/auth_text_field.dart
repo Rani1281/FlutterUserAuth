@@ -6,7 +6,6 @@ class AuthTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool obscureText;
   final double maxWidth;
-  final double height;
   final TextInputType keyboardType;
   final void Function(String)? onChanged;
 
@@ -17,7 +16,6 @@ class AuthTextField extends StatelessWidget {
     this.suffixIcon,
     this.obscureText = false,
     this.maxWidth = 450.0,
-    this.height = 48.0,
     this.keyboardType = TextInputType.text,
     this.onChanged,
   });
@@ -30,7 +28,6 @@ class AuthTextField extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: SizedBox(
           width: double.infinity,
-          height: height,
           child: TextField(
             controller: controller,
             obscureText: obscureText,

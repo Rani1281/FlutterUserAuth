@@ -8,6 +8,8 @@ class AuthPageModel extends ChangeNotifier {
 
   final AuthService service;
 
+  bool _disposed = false;
+
   bool _isLogin = true;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -24,6 +26,18 @@ class AuthPageModel extends ChangeNotifier {
   bool get isRunning => _isRunning;
   bool get isRunningGoogle => _isRunningGoogle;
 
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  void _notify() {
+    if (!_disposed) {
+      notifyListeners();
+    }
+  }
+
   void toggleForm() {
     _isLogin = !isLogin;
     _error = null;
@@ -31,17 +45,17 @@ class AuthPageModel extends ChangeNotifier {
     _isConfirmPasswordVisible = false;
     _isRunning = false;
     _isRunningGoogle = false;
-    notifyListeners();
+    _notify();
   }
 
   void togglePasswordVisibility() {
     _isPasswordVisible = !_isPasswordVisible;
-    notifyListeners();
+    _notify();
   }
 
   void toggleConfirmPasswordVisibility() {
     _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-    notifyListeners();
+    _notify();
   }
 
   Future<void> submit({
@@ -54,7 +68,7 @@ class AuthPageModel extends ChangeNotifier {
 
     _isRunning = true;
     _error = null; // clear the error
-    notifyListeners();
+    _notify();
 
     final String? message = validateFields(
       username: username,
@@ -67,7 +81,7 @@ class AuthPageModel extends ChangeNotifier {
       _error = message;
       _isRunning = false;
       log.warning('Details are not valid. Problem: $message');
-      notifyListeners();
+      _notify();
       return Future.value();
     }
 
@@ -76,8 +90,9 @@ class AuthPageModel extends ChangeNotifier {
       email: email,
       password: password,
     );
+    if (_disposed) return;
     _isRunning = false;
-    notifyListeners();
+    _notify();
   }
 
   String? validateFields({
@@ -143,7 +158,7 @@ class AuthPageModel extends ChangeNotifier {
     log.info('Google Authentication started...');
     _isRunningGoogle = true;
     _error = null;
-    notifyListeners();
+    _notify();
 
     try {
       final user = await service.signInWithGoogle();
@@ -160,8 +175,9 @@ class AuthPageModel extends ChangeNotifier {
       _error =
           'Something went wrong, please check your details or try again later';
     } finally {
+      if (_disposed) return;
       _isRunningGoogle = false;
-      notifyListeners();
+      _notify();
     }
   }
 

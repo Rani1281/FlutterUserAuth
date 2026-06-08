@@ -14,7 +14,17 @@ class FakeCustomAuthException extends Fake implements CustomAuthException {
   @override
   final String displayMessage;
 
-  FakeCustomAuthException(this.displayMessage);
+  @override
+  final String? code;
+
+  @override
+  final String? errorMessage;
+
+  FakeCustomAuthException(
+    this.displayMessage, {
+    this.code = 'test-code',
+    this.errorMessage = 'Test error message',
+  });
 }
 
 // --- Tests ---

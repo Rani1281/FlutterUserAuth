@@ -48,8 +48,9 @@ void main() {
     const testEmail = 'test@example.com';
     const testPassword = 'Password123!';
 
-    test('Returns UserCredential on successful registration', () async {
+    test('Returns User on successful registration', () async {
       // Arrange
+      when(() => mockUserCredential.user).thenReturn(mockUser);
       when(
         () => mockAuth.createUserWithEmailAndPassword(
           email: testEmail,
@@ -61,7 +62,7 @@ void main() {
       final result = await authService.register(testEmail, testPassword);
 
       // Assert
-      check(result).equals(mockUserCredential);
+      check(result).equals(mockUser);
       verify(
         () => mockAuth.createUserWithEmailAndPassword(
           email: testEmail,
@@ -114,8 +115,9 @@ void main() {
     const testEmail = 'test@example.com';
     const testPassword = 'Password123!';
 
-    test('Returns UserCredential on successful login', () async {
+    test('Returns User on successful login', () async {
       // Arrange
+      when(() => mockUserCredential.user).thenReturn(mockUser);
       when(
         () => mockAuth.signInWithEmailAndPassword(
           email: testEmail,
@@ -127,7 +129,7 @@ void main() {
       final result = await authService.login(testEmail, testPassword);
 
       // Assert
-      check(result).equals(mockUserCredential);
+      check(result).equals(mockUser);
       verify(
         () => mockAuth.signInWithEmailAndPassword(
           email: testEmail,
@@ -155,8 +157,9 @@ void main() {
       when(() => mockGoogleAuth.idToken).thenReturn('fake_id_token');
     });
 
-    test('Returns UserCredential on successful sign-in', () async {
+    test('Returns User on successful sign-in', () async {
       // Arrange
+      when(() => mockUserCredential.user).thenReturn(mockUser);
       when(
         () => mockAuth.signInWithCredential(any()),
       ).thenAnswer((_) async => mockUserCredential);
@@ -165,7 +168,7 @@ void main() {
       final result = await authService.signInWithGoogle();
 
       // Assert
-      check(result).equals(mockUserCredential);
+      check(result).equals(mockUser);
       verify(() => mockGoogleSignIn.initialize()).called(1);
       verify(() => mockGoogleSignIn.authenticate()).called(1);
       verify(() => mockAuth.signInWithCredential(any())).called(1);
