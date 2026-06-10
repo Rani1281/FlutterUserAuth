@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 class AuthPageModel extends ChangeNotifier {
-  AuthPageModel({required this.service});
+  AuthPageModel({AuthService? service}) : _service = service ?? AuthService();
 
-  final AuthService service;
+  final AuthService _service;
 
   bool _disposed = false;
 
@@ -131,13 +131,13 @@ class AuthPageModel extends ChangeNotifier {
     log.info('Authentication with Firebase started...');
     try {
       if (isLogin) {
-        final user = await service.login(email, password);
+        final user = await _service.login(email, password);
         if (user != null) {
           log.fine('User was successfully logged in!');
         }
       } else {
-        final user = await service.register(email, password);
-        await service.updateUsername(username);
+        final user = await _service.register(email, password);
+        await _service.updateUsername(username);
         if (user != null) {
           log.fine('User was successfully created, and username was updated!');
         }
@@ -161,7 +161,7 @@ class AuthPageModel extends ChangeNotifier {
     _notify();
 
     try {
-      final user = await service.signInWithGoogle();
+      final user = await _service.signInWithGoogle();
       if (user != null) {
         log.fine('Google authentication was successful!');
       }

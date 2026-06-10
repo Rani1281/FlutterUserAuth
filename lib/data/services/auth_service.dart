@@ -122,8 +122,9 @@ class AuthService {
         );
       }
     } on FirebaseAuthException catch (e) {
+      final displayError = authMessages[e.code] ?? 'Something went wrong';
       throw CustomAuthException(
-        'Something went wrong',
+        displayError,
         code: e.code,
         errorMessage: e.message,
       );
@@ -143,8 +144,9 @@ class AuthService {
         );
       }
     } on FirebaseAuthException catch (e) {
+      final displayError = authMessages[e.code] ?? 'Something went wrong';
       throw CustomAuthException(
-        'Something went wrong',
+        displayError,
         code: e.code,
         errorMessage: e.message,
       );
@@ -171,10 +173,10 @@ class AuthService {
     try {
       await _auth.signOut();
       await _googleSignIn.signOut();
-      debugPrint('User was successfully signed out');
     } on FirebaseAuthException catch (e) {
+      final displayError = authMessages[e.code] ?? 'Something went wrong';
       throw CustomAuthException(
-        'Something went wrong',
+        displayError,
         code: e.code,
         errorMessage: e.message,
       );
@@ -192,8 +194,9 @@ class AuthService {
       }
       return null;
     } on FirebaseAuthException catch (e) {
+      final displayError = authMessages[e.code] ?? 'Something went wrong';
       throw CustomAuthException(
-        'Something went wrong',
+        displayError,
         code: e.code,
         errorMessage: e.message,
       );

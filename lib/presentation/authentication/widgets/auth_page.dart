@@ -1,5 +1,4 @@
 import 'package:articly/data/services/auth_service.dart';
-import 'package:articly/presentation/authentication/widgets/forgot_password_page.dart';
 import 'package:articly/presentation/authentication/view_models/auth_page_model.dart';
 import 'package:articly/presentation/authentication/widgets/auth_button.dart';
 import 'package:articly/presentation/authentication/widgets/auth_text_field.dart';
@@ -7,9 +6,11 @@ import 'package:articly/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({super.key, this.viewModel});
+  AuthPage({super.key, AuthPageModel? viewModel})
+    : _viewModel = viewModel ?? AuthPageModel();
 
-  final AuthPageModel? viewModel;
+  final AuthPageModel _viewModel;
+  AuthPageModel get viewModel => _viewModel;
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -57,6 +58,7 @@ class _AuthPageState extends State<AuthPage> {
         return Scaffold(
           backgroundColor: AppColors.scaffoldBackgroundColor,
           appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             automaticallyImplyLeading: true,
             title: Text(
               isLogin ? 'Login' : 'Register', // Title changes based on state
@@ -106,14 +108,14 @@ class _AuthPageState extends State<AuthPage> {
                         controller: _usernameController,
                         hintText: 'Username',
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 15),
                     ],
                     AuthTextField(
                       key: Key('emailField'),
                       controller: _emailController,
                       hintText: 'Email',
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 15),
                     AuthTextField(
                       key: Key('passwordField'),
                       controller: _passwordController,
@@ -171,8 +173,7 @@ class _AuthPageState extends State<AuthPage> {
                     //   ),
                     //   const SizedBox(height: 5),
                     // ],
-
-                    SizedBox(height: isLogin ? 0 : 15),
+                    SizedBox(height: 15),
                     if (_viewModel.error != null) ...[
                       Text(
                         _viewModel.error!,

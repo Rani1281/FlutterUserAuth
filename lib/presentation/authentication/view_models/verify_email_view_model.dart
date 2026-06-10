@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 class VerifyEmailViewModel extends ChangeNotifier {
-  VerifyEmailViewModel({required AuthService authService})
-    : _authService = authService;
+  VerifyEmailViewModel({AuthService? authService})
+    : _authService = authService ?? AuthService();
 
   final AuthService _authService;
 
@@ -15,9 +15,12 @@ class VerifyEmailViewModel extends ChangeNotifier {
 
   bool _isEmailVerified = false;
 
+  bool _isRunningLogOut = false;
+
   String? get errorMessage => _errorMessage;
   bool get isRunning => _isRunning;
   bool get isEmailVerified => _isEmailVerified;
+  bool get isRunningLogOut => _isRunningLogOut;
 
   final log = Logger('VerifyEmailViewModel');
 
@@ -70,5 +73,27 @@ class VerifyEmailViewModel extends ChangeNotifier {
 
   String? getEmail() {
     return _authService.user?.email;
+  }
+
+  Future<void> logOut() async {
+    _errorMessage = null;
+    _isRunningLogOut = true;
+    notifyListeners();
+
+    try {
+      await _authService.signOut();
+      log.fine('The user has been successfully logged out!');
+    } on CustomAuthException catch (e) {
+      log.warning(
+        'An auth exception occurred in logout: ${e.code}: ${e.errorMessage}.',
+      );
+      _errorMessage = e.displayMessage;
+    } catch (e) {
+      log.shout('An error occurred in logout: ${e.toString()}');
+      _errorMessage = 'An error occurred. Please try again later';
+    } finally {
+      _isRunningLogOut = false;
+      notifyListeners();
+    }
   }
 }

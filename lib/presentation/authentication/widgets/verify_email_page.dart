@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:articly/presentation/authentication/view_models/verify_email_view_model.dart';
+import 'package:articly/presentation/authentication/widgets/auth_button.dart';
 import 'package:articly/presentation/authentication/widgets/cooldown_widget.dart';
+import 'package:articly/presentation/core/home_page.dart';
 import 'package:flutter/material.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({super.key, required this.viewModel});
+  VerifyEmailScreen({super.key, VerifyEmailViewModel? viewModel})
+    : _viewModel = viewModel ?? VerifyEmailViewModel();
 
-  final VerifyEmailViewModel viewModel;
+  final VerifyEmailViewModel _viewModel;
+  VerifyEmailViewModel get viewModel => _viewModel;
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -14,11 +18,13 @@ class VerifyEmailScreen extends StatefulWidget {
 
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   Timer? _timer;
+  String? _previousError;
 
   @override
   void initState() {
     super.initState();
     debugPrint('InitState activated');
+    widget.viewModel.addListener(_onViewModelChanged);
     // Send first email verification
     widget.viewModel.sendEmailVerification();
 
@@ -27,13 +33,35 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     _timer = Timer.periodic(
       const Duration(seconds: 3),
       (_) async => widget.viewModel.checkIfEmailVerified().then((isVerified) {
-        if (isVerified) _timer?.cancel();
+        if (isVerified) {
+          _timer?.cancel();
+
+          // Navigate to the Home page
+          if (mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const HomePage()),
+              (route) => false,
+            );
+          }
+        }
       }),
     );
   }
 
+  void _onViewModelChanged() {
+    final error = widget.viewModel.errorMessage;
+    if (error != null && error != _previousError && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error), behavior: SnackBarBehavior.floating),
+      );
+    }
+    _previousError = error;
+  }
+
   @override
   void dispose() {
+    widget.viewModel.removeListener(_onViewModelChanged);
     _timer?.cancel();
     super.dispose();
   }
@@ -42,7 +70,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: widget.viewModel,
-      builder: (context, child) {
+      builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: true,
@@ -86,6 +114,26 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       text: 'Resend email',
                       onResend: widget.viewModel.sendEmailVerification,
                       startCounting: true,
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    AuthButton(
+                      color: Colors.white,
+                      onPressed: widget.viewModel.logOut,
+                      child: widget.viewModel.isRunningLogOut
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              'Log into another account',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
+                            ),
                     ),
                   ],
                 ),
