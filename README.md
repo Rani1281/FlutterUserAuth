@@ -1,11 +1,14 @@
-# Articly
+# What is this app?
+This is a sample Flutter app for that has basic user authentication functionality:
+- Creating account or signing in
+- signing out
+- with email & password
+- with Google
+- email verification
+- forgot password (uncomplete as of now)
 
-This is a Flutter project built for Android, IOS, and Web
+# Why is this app usefull?
+This app is usefull to start developming fast - it bypasses what already almost always needs to be done.
 
-## What is this app?
-- This app lets you save intresting articles for reading them later.
-- Unlike a Google Keep or similar apps, it allows you to set customisable reading reminders notifications, and keeps you on track on your progress and pushes you to achieve further 💪.
-
-## Who is this app for?
-- Anyone who likes to read for fun or for work.
-- Busy people that don't have reading continuously.
+# Get started
+Clone this repository and switch the remote repository to not push changes into this one. Then, change you should change the name of the app in any place that refers to the current name "articly" (mostly the folder name, but also in some deep files). I think there's a Flutter command like "flutter rename" (you should check that).
