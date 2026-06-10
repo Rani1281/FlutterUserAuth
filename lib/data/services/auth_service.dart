@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:logging/logging.dart';
 
 class AuthService {
   AuthService({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
@@ -15,6 +16,8 @@ class AuthService {
   User? get user => _auth.currentUser;
 
   Stream<User?> get authChanges => _auth.idTokenChanges();
+
+  final log = Logger('AuthService');
 
   Future<User?> register(String email, String password) async {
     try {
@@ -113,6 +116,10 @@ class AuthService {
       final user = _auth.currentUser;
       if (user != null && !user.emailVerified) {
         await user.sendEmailVerification();
+      } else {
+        log.severe(
+          'Didn\'t send email verification either because the user doesn\'t exist or the email has already been verified',
+        );
       }
     } on FirebaseAuthException catch (e) {
       throw CustomAuthException(
@@ -130,6 +137,10 @@ class AuthService {
       final user = _auth.currentUser;
       if (user != null && user.emailVerified) {
         await _auth.sendPasswordResetEmail(email: email);
+      } else {
+        log.severe(
+          'Didn\'t send password reset email either because the user doesn\'t exist or the user\'s email is not verified',
+        );
       }
     } on FirebaseAuthException catch (e) {
       throw CustomAuthException(

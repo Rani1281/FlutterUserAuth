@@ -27,6 +27,11 @@ class VerifyEmailViewModel extends ChangeNotifier {
     _isRunning = true;
     notifyListeners();
 
+    if (_authService.user == null) {
+      log.shout('User doesn\'t exist, so not sending a verification');
+      return Future.value();
+    }
+
     try {
       await _authService.sendEmailVerification();
       log.fine('Email verification was sent successfully!');

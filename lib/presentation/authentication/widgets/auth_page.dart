@@ -148,29 +148,29 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                     ],
 
-                    if (isLogin) ...[
-                      const SizedBox(height: 5),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ForgotPasswordPage(
-                                  email: _emailController.text.trim(),
-                                ),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Forgot password?',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                    ],
+                    // if (isLogin) ...[
+                    //   const SizedBox(height: 5),
+                    //   Align(
+                    //     alignment: Alignment.centerRight,
+                    //     child: TextButton(
+                    //       onPressed: () {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => ForgotPasswordPage(
+                    //               email: _emailController.text.trim(),
+                    //             ),
+                    //           ),
+                    //         );
+                    //       },
+                    //       child: const Text(
+                    //         'Forgot password?',
+                    //         style: TextStyle(color: Colors.blue),
+                    //       ),
+                    //     ),
+                    //   ),
+                    //   const SizedBox(height: 5),
+                    // ],
 
                     SizedBox(height: isLogin ? 0 : 15),
                     if (_viewModel.error != null) ...[

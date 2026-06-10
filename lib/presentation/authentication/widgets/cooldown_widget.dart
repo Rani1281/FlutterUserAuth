@@ -2,23 +2,28 @@ import 'dart:async';
 
 import 'package:articly/presentation/authentication/widgets/auth_button.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 /// A wrapper widget that handles the cooldown logic for your custom AuthButton.
-class ResendEmailButton extends StatefulWidget {
+class CooldownAuthButton extends StatefulWidget {
   final VoidCallback onResend;
   final int cooldownSeconds;
+  final String text;
+  final bool startCounting;
 
-  const ResendEmailButton({
+  const CooldownAuthButton({
     super.key,
     required this.onResend,
     this.cooldownSeconds = 60, // Default cooldown of 60 seconds
+    required this.text,
+    this.startCounting = false,
   });
 
   @override
-  State<ResendEmailButton> createState() => _ResendEmailButtonState();
+  State<CooldownAuthButton> createState() => _CooldownAuthButtonState();
 }
 
-class _ResendEmailButtonState extends State<ResendEmailButton> {
+class _CooldownAuthButtonState extends State<CooldownAuthButton> {
   int _remainingSeconds = 0;
   Timer? _timer;
 
@@ -57,6 +62,12 @@ class _ResendEmailButtonState extends State<ResendEmailButton> {
   }
 
   @override
+  void initState() {
+    if (widget.startCounting) _startCooldown();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     // Always cancel the timer to prevent memory leaks when the widget is destroyed
     _timer?.cancel();
@@ -68,20 +79,16 @@ class _ResendEmailButtonState extends State<ResendEmailButton> {
     return Column(
       children: [
         AuthButton(
-          color: Colors.amber,
+          color: Colors.blue[400]!,
           onPressed: _isCooldown ? null : _handlePress,
-          child: const SizedBox(
-            height: 20,
-            width: 20,
-            child: Text('Resend Email'),
-          ),
+          child: Text(widget.text),
         ),
 
         if (_isCooldown) ...[
           const SizedBox(height: 8),
           Text(
             'Try again in $_remainingSeconds seconds',
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
+            style: const TextStyle(fontSize: 12, color: Colors.black87),
           ),
         ],
       ],

@@ -48,43 +48,47 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             automaticallyImplyLeading: true,
             title: const Text('Verify email'),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  const Text(
-                    'Check your email',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'We\'ve sent a verification link to your email ${widget.viewModel.getEmail() ?? ''}. Please check your inbox and click the link to verify your account. If you can\'t find it, please check in your spam folder or send again.',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 16),
-                  if (widget.viewModel.isEmailVerified)
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 450),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 40),
                     const Text(
-                      'Your email is verified!',
+                      'Check your email',
                       style: TextStyle(
-                        color: Colors.green,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        color: Colors.black87,
                       ),
                     ),
-                  const SizedBox(height: 32), // Space before the button
+                    const SizedBox(height: 8),
+                    Text(
+                      'We\'ve sent a verification link to your email ${widget.viewModel.getEmail() ?? ''}. Please check your inbox and click the link to verify your account. If you can\'t find it, please check in your spam folder or send again.',
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 16),
+                    if (widget.viewModel.isEmailVerified)
+                      const Text(
+                        'Your email is verified!',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    const SizedBox(height: 32), // Space before the button
 
-                  ResendEmailButton(
-                    onResend: widget.viewModel.sendEmailVerification,
-                  ),
-                ],
+                    CooldownAuthButton(
+                      text: 'Resend email',
+                      onResend: widget.viewModel.sendEmailVerification,
+                      startCounting: true,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
